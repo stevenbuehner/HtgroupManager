@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Steven BŸhner
+ * @author Steven Bï¿½hner
  * @license MIT
  * Parts of code are from: http://www.kavoir.com/2012/04/php-class-for-handling-htpasswd-and-htgroup-member-login-user-management.html
  * 
@@ -64,6 +64,21 @@ class HtgroupService {
 		}
 		
 		return $this->groupCache;
+	}
+
+	/**
+	 *
+	 * @param string $groupname        	
+	 * @return array:
+	 */
+	public function getUsersByGroup($groupname) {
+		$groups = $this->getGroups ();
+		
+		if (isset ( $group [$groupname] ) && is_array ( $group [$groupname] )) {
+			return $group [$groupname];
+		}
+		
+		return array ();
 	}
 
 	public function addUserToGroup($username = '', $group = '') {

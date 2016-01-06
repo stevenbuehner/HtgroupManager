@@ -88,7 +88,7 @@ class GroupController extends AbstractActionController {
 		return $model;
 	}
 
-	public function removeAction() {
+	public function removeGroupAction() {
 		$username = $this->params ( 'user', null );
 		$groupname = $this->params ( 'groupname', null );
 		
@@ -101,6 +101,22 @@ class GroupController extends AbstractActionController {
 		$model->setVariable ( 'messages', $messages );
 		
 		return $model;
+	}
+
+	public function removeUserAction() {
+	}
+	
+	// List all Users of a group
+	public function listAction() {
+		$groupname = $this->params ( 'groupname' );
+		
+		$users = $this->getHtgroupService ()->getUsersByGroup ( $groupname );
+		
+		return new ViewModel ( array (
+				'groupname' => $groupname,
+				'users' => $users,
+				'inputFieldUsername' => '' 
+		) );
 	}
 
 	/**
