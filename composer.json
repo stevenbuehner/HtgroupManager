@@ -1,0 +1,31 @@
+{
+    "name": "stevenbuehner/htgroup-manager",
+    "description": "A module for Zend Framework 2 to manage an apache .htgroup file for Basic Authentication.",
+    "keywords": [
+        "zf2",
+        "zend",
+        "module",
+        "htgroup",
+        "apache"
+    ],
+    "require": {
+        "zendframework/zend-stdlib": "~2.5"
+    },
+    "license": "MIT",
+    "type" : "library",
+    "autoload": {
+        "psr-4": {
+            "HtgroupManager\\": "src/"
+        },
+        "classmap": [
+            "src/",
+            "Module.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Steven Buehner",
+            "email": "buehner@me.com"
+        }
+    ]
+}
