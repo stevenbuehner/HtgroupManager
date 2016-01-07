@@ -1,0 +1,33 @@
+<?php
+$this->headScript ()->prependFile ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js' );
+$this->headLink ()->prependStylesheet ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' );
+
+$escaper = new Zend\Escaper\Escaper ( 'utf-8' );
+$_username = $escaper->escapeHtml ( $username );
+$_usernameInput = $escaper->escapeHtml ( $inputFieldUsername );
+$_updateUserGroupsUrl = $this->url ( 'htgroupmanager/ajax', array (
+		'action' => 'updateUserGroups' 
+) );
+
+if (is_array ( $allGroups )) {
+	echo '<select class="groupListing" multiple="multiple" style="width: 300px;">';
+	foreach ( $allGroups as $group => $users ) {
+		$selected = in_array ( $username, $users ) ? 'selected' : '';
+		
+		echo "<option value='{$group}' {$selected}>{$group}</option>";
+	}
+	
+	echo '</select>';
+	
+	echo '	<script type="text/javascript">
+			var url = "' . $_updateUserGroupsUrl . '";
+			$(".groupListing").select2({tags: true}).on("change", function(e){
+				$.post(url, {groups : $(this).val(), user : "' . $_username . '"})
+				console.log(e);
+});
+			</script>';
+} else {
+	echo "allGroups is no array";
+}
+
+?>
