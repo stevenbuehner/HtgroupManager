@@ -1,4 +1,7 @@
 <?php
+$this->headScript ()->prependFile ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js' );
+$this->headLink ()->prependStylesheet ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' );
+
 $escaper = new Zend\Escaper\Escaper ( 'utf-8' );
 $_username = $escaper->escapeHtml ( $username );
 $_groupname = $escaper->escapeHtml ( $groupname );
@@ -37,6 +40,7 @@ $_groupname = $escaper->escapeHtml ( $groupname );
 				echo "<td>";
 				echo $escaper->escapeHtml ( $group );
 				echo "</td>";
+				
 				
 				$url_remove = $this->url ( 'htgroupmanager/user', array (
 						'action' => 'removeGroup',

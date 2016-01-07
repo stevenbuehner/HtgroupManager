@@ -14,6 +14,7 @@ namespace HtgroupManager\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class GroupController extends AbstractActionController {
 	private $htgroupService = null;
@@ -122,6 +123,37 @@ class GroupController extends AbstractActionController {
 				'users' => $users,
 				'inputFieldUsername' => '' 
 		) );
+	}
+
+	public function updateUserGroupsAction() {
+		$user = $post = $this->getRequest ()->getPost ( 'user', '' );
+		$newGroups = $post = $this->getRequest ()->getPost ( 'groups', array () );
+		
+		$htGroupService = $this->getHtgroupService ();
+		
+		if (empty ( $user ) || ! is_array ( $newGroups )) {
+			return new JsonModel ( array (
+					'error with parameters' 
+			) );
+		}
+		
+		$oldUserGroups = $htGroupService->getGroupsByUser ( $user );
+		$new = array_diff ( $newGroups, $oldUserGroups );
+		$delted = array_diff ( $oldUserGroups, $newGroups );
+		
+		foreach ( $new as $n ) {
+			$htGroupService->addUserToGroup ( $user, $n );
+		}
+		
+		foreach ( $delted as $d ) {
+			$htGroupService->deleteUserFromGroup ( $user, $d );
+		}
+		
+		$result = array ();
+		$result ['new'] = $new;
+		$result ['del'] = $delted;
+		
+		return new JsonModel ( $result );
 	}
 
 	/**

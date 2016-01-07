@@ -1,4 +1,7 @@
 <?php
+$this->headScript ()->prependFile ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/select2.min.js' );
+$this->headLink ()->prependStylesheet ( '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css' );
+
 $escaper = new Zend\Escaper\Escaper ( 'utf-8' );
 $_groupname = $escaper->escapeHtml ( $groupname );
 $_usernameInput = $escaper->escapeHtml ( $inputFieldUsername );
@@ -62,8 +65,7 @@ $_usernameInput = $escaper->escapeHtml ( $inputFieldUsername );
 				method="POST">
 
 				<td><input type="text" name="username"
-					value="<?php echo $_username; ?>" />
-					 <input type="hidden"
+					value="<?php echo $_username; ?>" /> <input type="hidden"
 					name='groupname' value='<?php echo $_groupname; ?>'/ ></td>
 				<td><input type="submit" class='btn btn-default btn-sm' value="neu"></td>
 				<td></td>

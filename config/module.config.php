@@ -49,6 +49,17 @@ return array (
 																'groupname' => null 
 														) 
 												) 
+										),
+										'ajax' => array (
+												'type' => 'Segment',
+												'options' => array (
+														// Change this to something specific to your module
+														'route' => '/ajax/:action',
+														'constraints' => array (
+																'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
+														),
+														'defaults' => array () 
+												) 
 										) 
 								) 
 						) 
@@ -57,6 +68,9 @@ return array (
 		'view_manager' => array (
 				'template_path_stack' => array (
 						'HtgroupManager' => __DIR__ . '/../view' 
+				),
+				'strategies' => array (
+						'ViewJsonStrategy' 
 				) 
 		),
 		'HtgroupManager' => array (
