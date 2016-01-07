@@ -139,11 +139,21 @@ class HtgroupService implements GroupManagementInterface, RoleProviderInterface 
 
 	/**
 	 * (non-PHPdoc)
-	 * 
+	 *
 	 * @see \RoleInterfaces\Provider\RoleProviderInterface::getRoles()
 	 */
 	public function getRoles($username) {
 		return $this->getGroupsByUser ( $username );
+	}
+
+	/**
+	 *
+	 * @param string $groupname        	
+	 * @return boolean
+	 */
+	public function groupExists($groupname) {
+		// Function returns an empty array, if the group was not found, because now user exists
+		return count ( $this->getUsersByGroup ( $groupname ) ) > 0;
 	}
 
 }
