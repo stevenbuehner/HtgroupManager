@@ -2,8 +2,13 @@
 
 /**
  * 
- * @copyright Steven B√ºhner
+ * (c) Steven Bühner <buehner@me.com>
+
+ * @author Steven Bühner
  * @license MIT
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 namespace HtgroupManager\Controller;
 

@@ -1,10 +1,14 @@
 <?php
 
 /**
- * @author Steven B�hner
- * @license MIT
- * Parts of code are from: http://www.kavoir.com/2012/04/php-class-for-handling-htpasswd-and-htgroup-member-login-user-management.html
  * 
+ * (c) Steven Bühner <buehner@me.com>
+
+ * @author Steven Bühner
+ * @license MIT
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 namespace HtgroupManager\Service;
 
