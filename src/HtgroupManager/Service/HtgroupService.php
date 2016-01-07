@@ -12,7 +12,10 @@
  */
 namespace HtgroupManager\Service;
 
-class HtgroupService {
+use RoleInterfaces\Service\GroupManagementInterface;
+use RoleInterfaces\Provider\RoleProviderInterface;
+
+class HtgroupService implements GroupManagementInterface, RoleProviderInterface {
 	private $filename;
 	
 	// Caching of htpasswd-file
@@ -85,16 +88,16 @@ class HtgroupService {
 		return array ();
 	}
 
-	public function addUserToGroup($username = '', $group = '') {
-		if (! empty ( $username ) && ! empty ( $group )) {
+	public function addUserToGroup($username = '', $groupname = '') {
+		if (! empty ( $username ) && ! empty ( $groupname )) {
 			$all = $this->getGroups ();
 			
-			if (isset ( $all [$group] )) {
-				if (! in_array ( $username, $all [$group] )) {
-					$all [$group] [] = $username;
+			if (isset ( $all [$groupname] )) {
+				if (! in_array ( $username, $all [$groupname] )) {
+					$all [$groupname] [] = $username;
 				}
 			} else {
-				$all [$group] [] = $username;
+				$all [$groupname] [] = $username;
 			}
 			
 			$this->writeGroups ( $all );
@@ -132,6 +135,15 @@ class HtgroupService {
 		}
 		
 		return $userGroups;
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * 
+	 * @see \RoleInterfaces\Provider\RoleProviderInterface::getRoles()
+	 */
+	public function getRoles($username) {
+		return $this->getGroupsByUser ( $username );
 	}
 
 }
