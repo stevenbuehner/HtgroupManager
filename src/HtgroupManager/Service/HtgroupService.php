@@ -15,7 +15,7 @@ namespace HtgroupManager\Service;
 use RoleInterfaces\Service\GroupManagementInterface;
 use RoleInterfaces\Provider\RoleProviderInterface;
 
-class HtgroupService implements GroupManagementInterface, RoleProviderInterface {
+class HtgroupService implements GroupManagementInterface {
 	private $filename;
 	
 	// Caching of htpasswd-file
@@ -135,15 +135,6 @@ class HtgroupService implements GroupManagementInterface, RoleProviderInterface 
 		}
 		
 		return $userGroups;
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see \RoleInterfaces\Provider\RoleProviderInterface::getRoles()
-	 */
-	public function getRoles($username) {
-		return $this->getGroupsByUser ( $username );
 	}
 
 	/**
