@@ -13,13 +13,12 @@
 namespace HtgroupManager\Service;
 
 use RoleInterfaces\Service\GroupManagementInterface;
-use RoleInterfaces\Provider\RoleProviderInterface;
 
 class HtgroupService implements GroupManagementInterface {
-	private $filename;
+	protected $filename;
 	
 	// Caching of htpasswd-file
-	private $groupCache = null;
+	protected $groupCache = null;
 	
 	// Static Variables
 	static $REGULAR_USER_PASSWORD = '~^([^:]+):(.+)$~im';
@@ -29,15 +28,15 @@ class HtgroupService implements GroupManagementInterface {
 		$this->createFileIfNotExistant ();
 	}
 
-	private function createFileIfNotExistant() {
+	protected function createFileIfNotExistant() {
 		if (true === file_exists ( $this->filename )) {
 		} else {
 			touch ( $this->filename );
 		}
 	}
 
-	private function readGroups() {
-		$groups = array ();
+	protected function readGroups() {
+		$groups = array();
 		
 		$groups_str = file ( $this->filename, FILE_IGNORE_NEW_LINES );
 		foreach ( $groups_str as $group_str ) {
@@ -53,7 +52,7 @@ class HtgroupService implements GroupManagementInterface {
 		return $groups;
 	}
 
-	private function writeGroups($groups = array()) {
+	protected function writeGroups($groups = array()) {
 		$str = '';
 		
 		foreach ( $groups as $group => $users ) {
@@ -81,11 +80,11 @@ class HtgroupService implements GroupManagementInterface {
 	public function getUsersByGroup($groupname) {
 		$groups = $this->getGroups ();
 		
-		if (isset ( $group [$groupname] ) && is_array ( $group [$groupname] )) {
-			return $group [$groupname];
+		if (isset ( $groups [$groupname] ) && is_array ( $groups [$groupname] )) {
+			return $groups [$groupname];
 		}
 		
-		return array ();
+		return array();
 	}
 
 	public function addUserToGroup($username = '', $groupname = '') {
@@ -126,7 +125,7 @@ class HtgroupService implements GroupManagementInterface {
 	public function getGroupsByUser($username = '') {
 		$allGroups = $this->getGroups ();
 		
-		$userGroups = array ();
+		$userGroups = array();
 		
 		foreach ( $allGroups as $groupName => $users ) {
 			if (in_array ( $username, $users )) {
@@ -148,5 +147,4 @@ class HtgroupService implements GroupManagementInterface {
 	}
 
 }
-
 ?>
