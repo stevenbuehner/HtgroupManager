@@ -5,9 +5,14 @@ return array (
 						'HtgroupManager\Controller\Group' => 'HtgroupManager\Controller\GroupController' 
 				) 
 		),
-		'router' => array (
-				'routes' => array (
-						'htgroupmanager' => array (
+		'view_helpers' => array( 
+				'factories' => array( 
+						'htGroupService' => 'HtgroupManager\View\Helper\Factory\HtGroupManagerHelperFactory' 
+				) 
+		),
+		'router' => array( 
+				'routes' => array( 
+						'htgroupmanager' => array( 
 								'type' => 'Literal',
 								'options' => array (
 										'route' => '/groupmanagement',
