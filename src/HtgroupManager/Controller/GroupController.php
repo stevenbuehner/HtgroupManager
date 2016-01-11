@@ -24,9 +24,9 @@ class GroupController extends AbstractActionController {
 		$htpasswd = $this->getHtpasswdService ();
 		$userList = $htpasswd->getUserList ();
 		
-		$result = array ();
+		$result = array();
 		foreach ( $userList as $username => $pass ) {
-			$result [] = array (
+			$result [] = array( 
 					'username' => $username,
 					'paswd' => $pass,
 					'isAdmin' => $htpasswd->isUserAllowedToManageUsers ( $username ),
@@ -34,7 +34,7 @@ class GroupController extends AbstractActionController {
 			);
 		}
 		
-		$model = new ViewModel ( array (
+		$model = new ViewModel ( array( 
 				'userList' => $result 
 		) );
 		
@@ -51,7 +51,7 @@ class GroupController extends AbstractActionController {
 		$groupService = $this->getHtgroupService ();
 		$groups = $groupService->getGroupsByUser ( $user );
 		
-		return new ViewModel ( array (
+		return new ViewModel ( array( 
 				'groups' => $groups,
 				'username' => $user 
 		) );
@@ -61,7 +61,7 @@ class GroupController extends AbstractActionController {
 		$username = $post = $this->getRequest ()->getPost ( 'username', '' );
 		$groupname = $post = $this->getRequest ()->getPost ( 'groupname', '' );
 		
-		$messages = array ();
+		$messages = array();
 		
 		if (empty ( $username ) || empty ( $groupname )) {
 			// Loading View without sending Post
@@ -118,7 +118,7 @@ class GroupController extends AbstractActionController {
 		
 		$users = $this->getHtgroupService ()->getUsersByGroup ( $groupname );
 		
-		return new ViewModel ( array (
+		return new ViewModel ( array( 
 				'groupname' => $groupname,
 				'users' => $users,
 				'inputFieldUsername' => '' 
@@ -127,12 +127,17 @@ class GroupController extends AbstractActionController {
 
 	public function updateUserGroupsAction() {
 		$user = $post = $this->getRequest ()->getPost ( 'user', '' );
-		$newGroups = $post = $this->getRequest ()->getPost ( 'groups', array () );
+		$newGroups = $post = $this->getRequest ()->getPost ( 'groups', null );
+		
+		// When no value is transmitted at all it will be equal to ''
+		if ($newGroups == '')
+			$newGroups = array();
 		
 		$htGroupService = $this->getHtgroupService ();
 		
 		if (empty ( $user ) || ! is_array ( $newGroups )) {
-			return new JsonModel ( array (
+			var_dump ( $user, $newGroups );
+			return new JsonModel ( array( 
 					'error with parameters' 
 			) );
 		}
@@ -149,7 +154,7 @@ class GroupController extends AbstractActionController {
 			$htGroupService->deleteUserFromGroup ( $user, $d );
 		}
 		
-		$result = array ();
+		$result = array();
 		$result ['new'] = $new;
 		$result ['del'] = $delted;
 		
