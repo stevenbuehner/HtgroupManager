@@ -44,7 +44,16 @@ class HtgroupService implements GroupManagementInterface {
 				$group_str_array = explode ( ': ', $group_str );
 				if (count ( $group_str_array ) == 2) {
 					$users_array = explode ( ' ', $group_str_array [1] );
-					$groups [$group_str_array [0]] = $users_array;
+					
+					foreach ( $users_array as $id => $user ) {
+						if (empty ( $user )) {
+							unset ( $users_array [$id] );
+						}
+					}
+					
+					// Only add groups, that have users
+					if (count ( $users_array ) > 0)
+						$groups [$group_str_array [0]] = $users_array;
 				}
 			}
 		}
