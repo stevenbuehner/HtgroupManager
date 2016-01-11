@@ -25,6 +25,10 @@ echo '	<script type="text/javascript">
 			var url = "' . $_updateUserGroupsUrl . '";
 			$(".groupListing").select2().on("change", function(e){
 				$.post(url, {groups : $(this).val(), user : "' . $_username . '"})
+					.fail(function(data){
+						alert("Es gab einen Übertragungsfehler. Bitte die Seite neu laden!");
+					}).done(function(data){
+					});
 				console.log(e);
 });
 		</script>';
