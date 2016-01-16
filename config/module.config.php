@@ -87,6 +87,7 @@ return array(
 		'HtgroupManager' => array( 
 				// Carefull! File needs to be writeable by apache-user (www-data)
 				// The .htaccess file needs to be set to use this .htpasswd_HtpasswdManager file for authentication
-				'htgroup' => '/var/www/.htpasswd_HtpasswdManager' 
-		) 
+				'htgroup' => '/var/www/.htpasswd_HtpasswdManager',
+				'users_may_reate_new_groups' => true  // allowed is boolean (for general) or array with userIds
+				) 
 );

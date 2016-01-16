@@ -10,6 +10,7 @@ $manageableGroups = $this->htGroupManagerService ()->getGroupsUserIsAllowedToMan
 $_updateUserGroupsUrl = $this->url ( 'htgroupmanager/ajax', array( 
 		'action' => 'updateUserGroups' 
 ) );
+$_allowCreateNewGroups = $this->htGroupManagerService ()->isUserAllowedToCreateNewGroups ( $currentUser ) === true ? 'true' : 'false';
 
 echo '<select class="groupListing" multiple="multiple" style="width: 300px;">';
 
@@ -23,7 +24,8 @@ echo '</select>';
 // TODO: success -> gebe den gespeicherten Wert zurück und zeige ihn an
 echo '	<script type="text/javascript">
 			var url = "' . $_updateUserGroupsUrl . '";
-			$(".groupListing").select2().on("change", function(e){
+			var createNewGroups = ' . $_allowCreateNewGroups . ';
+			$(".groupListing").select2({tags : createNewGroups}).on("change", function(e){
 				var myElem = $(this);
 				$.post(url, {groups : $(this).val(), user : "' . $_username . '"}, function(data){
 						if(data.msg){
