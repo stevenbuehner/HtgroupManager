@@ -1,79 +1,90 @@
 <?php
-return array (
-		'controllers' => array (
-				'invokables' => array (
+return array( 
+		'controllers' => array( 
+				'invokables' => array( 
 						'HtgroupManager\Controller\Group' => 'HtgroupManager\Controller\GroupController' 
 				) 
 		),
-		'router' => array (
-				'routes' => array (
-						'htgroupmanager' => array (
+		'service_manager' => array( 
+				'factories' => array( 
+						'HtgroupManager\Service\HtGroupFileService' => 'HtgroupManager\Service\Factory\HtGroupFileServiceFactory',
+						'HtgroupManager\Service\GroupManageService' => 'HtgroupManager\Service\Factory\GroupManageServiceFactory' 
+				) 
+		),
+		'view_helpers' => array( 
+				'factories' => array( 
+						'htGroupManagerService' => 'HtgroupManager\View\Helper\Factory\HtGroupManagerHelperFactory' 
+				) 
+		),
+		'router' => array( 
+				'routes' => array( 
+						'htgroupmanager' => array( 
 								'type' => 'Literal',
-								'options' => array (
+								'options' => array( 
 										'route' => '/groupmanagement',
-										'defaults' => array (
+										'defaults' => array( 
 												'__NAMESPACE__' => 'HtgroupManager\Controller',
 												'controller' => 'Group',
 												'action' => 'index' 
 										) 
 								),
 								'may_terminate' => true,
-								'child_routes' => array (
-										'user' => array (
+								'child_routes' => array( 
+										'user' => array( 
 												'type' => 'Segment',
-												'options' => array (
+												'options' => array( 
 														// Change this to something specific to your module
 														'route' => '/user/[:user]/[:action][/:groupname]',
-														'constraints' => array (
+														'constraints' => array( 
 																'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
 																'user' => '[a-zA-Z0-9.!?_-]+',
 																'groupname' => '[a-zA-Z0-9.!?_-]+' 
 														),
-														'defaults' => array (
+														'defaults' => array( 
 																'user' => null,
 																'action' => 'listGroups',
 																'groupname' => null 
 														) 
 												) 
 										),
-										'group' => array (
+										'group' => array( 
 												'type' => 'Segment',
-												'options' => array (
+												'options' => array( 
 														// Change this to something specific to your module
 														'route' => '/group/:action[/:groupname]',
-														'constraints' => array (
+														'constraints' => array( 
 																'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
 																'groupname' => '[a-zA-Z][a-zA-Z0-9._-]+' 
 														),
-														'defaults' => array (
+														'defaults' => array( 
 																'groupname' => null 
 														) 
 												) 
 										),
-										'ajax' => array (
+										'ajax' => array( 
 												'type' => 'Segment',
-												'options' => array (
+												'options' => array( 
 														// Change this to something specific to your module
 														'route' => '/ajax/:action',
-														'constraints' => array (
+														'constraints' => array( 
 																'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
 														),
-														'defaults' => array () 
+														'defaults' => array() 
 												) 
 										) 
 								) 
 						) 
 				) 
 		),
-		'view_manager' => array (
-				'template_path_stack' => array (
+		'view_manager' => array( 
+				'template_path_stack' => array( 
 						'HtgroupManager' => __DIR__ . '/../view' 
 				),
-				'strategies' => array (
+				'strategies' => array( 
 						'ViewJsonStrategy' 
 				) 
 		),
-		'HtgroupManager' => array (
+		'HtgroupManager' => array( 
 				// Carefull! File needs to be writeable by apache-user (www-data)
 				// The .htaccess file needs to be set to use this .htpasswd_HtpasswdManager file for authentication
 				'htgroup' => '/var/www/.htpasswd_HtpasswdManager' 

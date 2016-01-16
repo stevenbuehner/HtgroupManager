@@ -17,122 +17,48 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 
 class GroupController extends AbstractActionController {
-	private $htgroupService = null;
-	private $htpasswdService = null;
+	protected $htGroupFileService = null;
+	protected $htpasswdService = null;
+	protected $groupManageService = null;
+	protected $userService = null;
 
-	function indexAction() {
-		$htpasswd = $this->getHtpasswdService ();
-		$userList = $htpasswd->getUserList ();
+	/**
+	 * Function returns false, if the current User does not have permission to edit any one of the given group
+	 *
+	 * @param array $groups        	
+	 * @return boolean
+	 */
+	protected function checkActionOnGroupAllowed($groups) {
+		$groupService = $this->getGroupManageService ();
+		$username = $this->getUserService ()->getCurrentUser ();
 		
-		$result = array ();
-		foreach ( $userList as $username => $pass ) {
-			$result [] = array (
-					'username' => $username,
-					'paswd' => $pass,
-					'isAdmin' => $htpasswd->isUserAllowedToManageUsers ( $username ),
-					'isDeletable' => $htpasswd->isUserDeleteable ( $username ) 
-			);
-		}
-		
-		$model = new ViewModel ( array (
-				'userList' => $result 
-		) );
-		
-		return $model;
-	}
-
-	public function listGroupsAction() {
-		$user = $this->params ( 'user' );
-		
-		return $this->getViewModellForListGroupActions ( $user );
-	}
-
-	private function getViewModellForListGroupActions($user) {
-		$groupService = $this->getHtgroupService ();
-		$groups = $groupService->getGroupsByUser ( $user );
-		
-		return new ViewModel ( array (
-				'groups' => $groups,
-				'username' => $user 
-		) );
-	}
-
-	public function addAction() {
-		$username = $post = $this->getRequest ()->getPost ( 'username', '' );
-		$groupname = $post = $this->getRequest ()->getPost ( 'groupname', '' );
-		
-		$messages = array ();
-		
-		if (empty ( $username ) || empty ( $groupname )) {
-			// Loading View without sending Post
-			$messages [] = "Fehler: Das Formular enthält keine Daten!";
-		} else {
-			// Loading View with sending Post-Data
-			$uValid = $this->isUsernameValid ( $username );
-			if (true !== $uValid) {
-				$messages [] = $uValid;
-			}
-			
-			$gValid = $this->isGroupnameValid ( $groupname );
-			if (true !== $gValid) {
-				$messages [] = $gValid;
-			}
-			
-			if (true === $uValid && true === $gValid) {
-				$groupS = $this->getHtgroupService ();
-				
-				$groupS->addUserToGroup ( $username, $groupname );
-				$messages [] = "Die Gruppe '{$groupname}' wurde dem Benutzer '{$username}' hinzugefügt.";
+		// If only one group the user tries to edit has wrong priviledges -> kill everything
+		foreach ( $groups as $g ) {
+			if (false === $groupService->isUserAllowedToManageGroup ( $username, $g )) {
+				// $this->getResponse ()->setStatusCode ( 401 );
+				return false;
 			}
 		}
 		
-		$model = $this->getViewModellForListGroupActions ( $username );
-		$model->setTemplate ( 'htgroup-manager/group/list-groups' );
-		
-		$model->setVariable ( 'messages', $messages );
-		
-		return $model;
-	}
-
-	public function removeGroupAction() {
-		$username = $this->params ( 'user', null );
-		$groupname = $this->params ( 'groupname', null );
-		
-		$this->getHtgroupService ()->deleteUserFromGroup ( $username, $groupname );
-		
-		$model = $this->getViewModellForListGroupActions ( $username );
-		$model->setTemplate ( 'htgroup-manager/group/list-groups' );
-		
-		$messages [] = "Dem Benutzer '{$username}' wurde die Gruppengehörigkeit zu '{$groupname}' entzogen.";
-		$model->setVariable ( 'messages', $messages );
-		
-		return $model;
-	}
-
-	public function removeUserAction() {
-	}
-	
-	// List all Users of a group
-	public function listAction() {
-		$groupname = $this->params ( 'groupname' );
-		
-		$users = $this->getHtgroupService ()->getUsersByGroup ( $groupname );
-		
-		return new ViewModel ( array (
-				'groupname' => $groupname,
-				'users' => $users,
-				'inputFieldUsername' => '' 
-		) );
+		return true;
 	}
 
 	public function updateUserGroupsAction() {
 		$user = $post = $this->getRequest ()->getPost ( 'user', '' );
-		$newGroups = $post = $this->getRequest ()->getPost ( 'groups', array () );
+		$newGroups = $post = $this->getRequest ()->getPost ( 'groups', null );
+		$result = array( 
+				'success' => true,
+				'data' => array() 
+		);
 		
-		$htGroupService = $this->getHtgroupService ();
+		// When no value is transmitted at all it will be equal to ''
+		if ($newGroups == '')
+			$newGroups = array();
+		
+		$htGroupService = $this->getHtGroupFileService ();
 		
 		if (empty ( $user ) || ! is_array ( $newGroups )) {
-			return new JsonModel ( array (
+			return new JsonModel ( array( 
 					'error with parameters' 
 			) );
 		}
@@ -140,6 +66,15 @@ class GroupController extends AbstractActionController {
 		$oldUserGroups = $htGroupService->getGroupsByUser ( $user );
 		$new = array_diff ( $newGroups, $oldUserGroups );
 		$delted = array_diff ( $oldUserGroups, $newGroups );
+		
+		// Check Permissions
+		$chkGroups = array_merge ( $new, $delted );
+		if (false === $this->checkActionOnGroupAllowed ( $chkGroups )) {
+			$result ['success'] = false;
+			$result ['data'] = $oldUserGroups;
+			$result ['msg'] = 'Sie haben hierfür keine Berechtigung.';
+			return new JsonModel ( $result );
+		}
 		
 		foreach ( $new as $n ) {
 			$htGroupService->addUserToGroup ( $user, $n );
@@ -149,9 +84,11 @@ class GroupController extends AbstractActionController {
 			$htGroupService->deleteUserFromGroup ( $user, $d );
 		}
 		
-		$result = array ();
-		$result ['new'] = $new;
-		$result ['del'] = $delted;
+		$result ['data'] = $htGroupService->getGroupsByUser ( $user );
+		$result ['debug'] = array( 
+				'new' => $new,
+				'del' => $delted 
+		);
 		
 		return new JsonModel ( $result );
 	}
@@ -204,15 +141,41 @@ class GroupController extends AbstractActionController {
 
 	/**
 	 *
-	 * @return false | \HtgroupManager\Service\HtgroupService
+	 * @return false | \HtgroupManager\Service\HtGroupFileService
 	 */
-	private function getHtgroupService() {
-		if ($this->htgroupService === null) {
+	private function getHtGroupFileService() {
+		if ($this->htGroupFileService === null) {
 			$sl = $this->getServiceLocator ();
-			$this->htgroupService = $sl->get ( 'HtgroupManager\Service\HtgroupService' );
+			$this->htGroupFileService = $sl->get ( 'HtgroupManager\Service\HtGroupFileService' );
 		}
 		
-		return $this->htgroupService;
+		return $this->htGroupFileService;
+	}
+
+	/**
+	 *
+	 * @return \HtgroupManager\Service\GroupManageService
+	 */
+	private function getGroupManageService() {
+		if ($this->groupManageService === null) {
+			$sl = $this->getServiceLocator ();
+			$this->groupManageService = $sl->get ( 'HtgroupManager\Service\GroupManageService' );
+		}
+		
+		return $this->groupManageService;
+	}
+
+	/**
+	 *
+	 * @return HtpasswdManager\Service\UserService
+	 */
+	private function getUserService() {
+		if ($this->userService === null) {
+			$sl = $this->getServiceLocator ();
+			$this->userService = $sl->get ( 'HtpasswdManager\Service\UserService' );
+		}
+		
+		return $this->userService;
 	}
 
 }
