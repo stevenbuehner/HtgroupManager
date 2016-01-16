@@ -20,6 +20,9 @@ class HtGroupManagerHelper extends AbstractHelper {
 		$this->groupManagerService = $htGroup;
 	}
 
+	/**
+	 * @return GroupManageService
+	 */
 	public function __invoke() {
 		return $this->groupManagerService;
 	}

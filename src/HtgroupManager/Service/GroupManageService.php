@@ -10,10 +10,12 @@ class GroupManageService implements EventManagerAwareInterface {
 	protected $HtGroupFileService;
 	protected $eventManager;
 	protected $groupManagementUsers = array();
+	protected $userMayCreateNewGroups = true;
 
-	public function __construct($HtGroupFileService, $groupManagementUsers) {
+	public function __construct($HtGroupFileService, $groupManagementUsers, $userMayCreateNewGroups) {
 		$this->HtGroupFileService = $HtGroupFileService;
 		$this->groupManagementUsers = $groupManagementUsers;
+		$this->userMayCreateNewGroups = $userMayCreateNewGroups;
 	}
 
 	public function getGroupsUserIsAllowedToManage($user) {
@@ -32,8 +34,6 @@ class GroupManageService implements EventManagerAwareInterface {
 		foreach ( $allGroups as $groupName => $users ) {
 			$groups [] = $groupName;
 		}
-		
-		// var_dump($groups);
 		
 		$eResult = $this->getEventManager ()->trigger ( 'post_' . __FUNCTION__, $this, array( 
 				'user' => $user,
@@ -72,6 +72,21 @@ class GroupManageService implements EventManagerAwareInterface {
 		}
 		
 		return false;
+	}
+
+	public function isUserAllowedToCreateNewGroups($username) {
+		$eResult = $this->getEventManager ()->trigger ( 'pre_' . __FUNCTION__, $this, array( 
+				'user' => $username 
+		) );
+		if ($eResult->stopped ()) {
+			return $eResult->last ();
+		}
+		
+		if (is_bool ( $this->userMayCreateNewGroups )) {
+			return $this->userMayCreateNewGroups;
+		}
+		
+		return (is_array ( $this->userMayCreateNewGroups ) && in_array ( $username, $this->userMayCreateNewGroups ));
 	}
 
 	public function setEventManager(EventManagerInterface $eventManager) {
