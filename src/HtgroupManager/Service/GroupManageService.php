@@ -47,11 +47,17 @@ class GroupManageService implements EventManagerAwareInterface {
 	public function getGroupsUserIsAssignedTo($user) {
 		$userGroups = $this->HtGroupFileService->getGroupsByUser ( $user );
 		
+		$eResult = $this->getEventManager ()->trigger ( 'post_' . __FUNCTION__, $this, array( 
+				'groups' => $userGroups 
+		) );
+		if ($eResult->stopped ())
+			return $eResult->last ();
+		
 		return $userGroups;
 	}
 
 	public function isUserAllowedToManageGroup($username, $groupname) {
-		$eResult = $this->getEventManager ()->trigger ( 'post_' . __FUNCTION__, $this, array( 
+		$eResult = $this->getEventManager ()->trigger ( 'pre_' . __FUNCTION__, $this, array( 
 				'user' => $username,
 				'group' => $groupname 
 		) );
