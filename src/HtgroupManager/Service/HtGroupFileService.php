@@ -104,7 +104,9 @@ class HtGroupFileService implements GroupManagementInterface {
 				if (! in_array ( $username, $all [$groupname] )) {
 					$all [$groupname] [] = $username;
 				}
-			} else {
+				
+				// Only add the user to the group, if the user is not in the group yet
+			} else if (! in_array ( $username, $groupname )) {
 				$all [$groupname] [] = $username;
 			}
 			
