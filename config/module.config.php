@@ -7,12 +7,13 @@ return array(
 		),
 		'service_manager' => array( 
 				'factories' => array( 
-						'HtgroupManager\Service\HtgroupService' => 'HtgroupManager\Service\Factory\HtgroupServiceFactory' 
+						'HtgroupManager\Service\HtGroupFileService' => 'HtgroupManager\Service\Factory\HtGroupFileServiceFactory',
+						'HtgroupManager\Service\GroupManageService' => 'HtgroupManager\Service\Factory\GroupManageServiceFactory' 
 				) 
 		),
 		'view_helpers' => array( 
 				'factories' => array( 
-						'htGroupService' => 'HtgroupManager\View\Helper\Factory\HtGroupManagerHelperFactory' 
+						'htGroupManagerService' => 'HtgroupManager\View\Helper\Factory\HtGroupManagerHelperFactory' 
 				) 
 		),
 		'router' => array( 

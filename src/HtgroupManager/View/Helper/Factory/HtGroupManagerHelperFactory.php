@@ -8,7 +8,7 @@ class HtGroupManagerHelperFactory {
 
 	public function __invoke($serviceLocator) {
 		$sm = $serviceLocator->getServiceLocator ();
-		$groupService = $sm->get ( 'HtgroupManager\Service\HtgroupService' );
+		$groupService = $sm->get ( 'HtgroupManager\Service\GroupManageService' );
 		
 		return new HtGroupManagerHelper ( $groupService );
 	}

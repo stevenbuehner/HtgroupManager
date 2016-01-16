@@ -2,9 +2,9 @@
 
 namespace HtgroupManager\Service\Factory;
 
-use HtgroupManager\Service\HtgroupService;
+use HtgroupManager\Service\HtGroupFileService;
 
-class HtGroupServiceFactory {
+class HtGroupFileServiceFactory {
 
 	public function __invoke($sm) {
 		$config = $sm->get ( 'Config' );
@@ -14,7 +14,7 @@ class HtGroupServiceFactory {
 		}
 		$htgroup_filename = $config ['HtgroupManager'] ['htgroup'];
 		
-		$groupService = new HtgroupService ( $htgroup_filename );
+		$groupService = new HtGroupFileService ( $htgroup_filename );
 		
 		return $groupService;
 	}

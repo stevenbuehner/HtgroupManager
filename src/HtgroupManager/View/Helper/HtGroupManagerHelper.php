@@ -3,8 +3,7 @@
 namespace HtgroupManager\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
-use RoleInterfaces\Service\GroupManagementInterface;
-use HtgroupManager\Service\HtgroupService;
+use HtgroupManager\Service\GroupManageService;
 
 class HtGroupManagerHelper extends AbstractHelper {
 	/**
@@ -17,11 +16,12 @@ class HtGroupManagerHelper extends AbstractHelper {
 	 *
 	 * @param HtgroupService $htGroup        	
 	 */
-	public function __construct(HtgroupService $htGroup) {
+	public function __construct(GroupManageService $htGroup) {
 		$this->groupManagerService = $htGroup;
 	}
 
 	public function __invoke() {
 		return $this->groupManagerService;
 	}
+
 }
