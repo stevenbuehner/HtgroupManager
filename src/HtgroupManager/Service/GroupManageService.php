@@ -9,9 +9,11 @@ use Zend\EventManager\EventManagerInterface;
 class GroupManageService implements EventManagerAwareInterface {
 	protected $HtGroupFileService;
 	protected $eventManager;
+	protected $groupManagementUsers = array();
 
-	public function __construct($HtGroupFileService) {
+	public function __construct($HtGroupFileService, $groupManagementUsers) {
 		$this->HtGroupFileService = $HtGroupFileService;
+		$this->groupManagementUsers = $groupManagementUsers;
 	}
 
 	public function getGroupsUserIsAllowedToManage($user) {
@@ -65,8 +67,11 @@ class GroupManageService implements EventManagerAwareInterface {
 			return $eResult->last ();
 		}
 		
-		$groups = $this->getGroupsUserIsAllowedToManage ( $username );
-		return in_array ( $groupname, $groups );
+		if ($this->groupManagementUsers === true || (is_array ( $this->groupManagementUsers )) && in_array ( $username, $this->groupManagementUsers )) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	public function setEventManager(EventManagerInterface $eventManager) {
