@@ -13,14 +13,9 @@
 namespace HtgroupManager\Service;
 
 use RoleInterfaces\Service\GroupManagementInterface;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerInterface;
 
-class HtGroupFileService implements GroupManagementInterface, EventManagerAwareInterface {
+class HtGroupFileService implements GroupManagementInterface {
 	protected $filename;
-	
-	// EventManager from EventManagerAwareInterface
-	protected $eventManager;
 	
 	// Caching of htpasswd-file
 	protected $groupCache = null;
@@ -31,18 +26,6 @@ class HtGroupFileService implements GroupManagementInterface, EventManagerAwareI
 	public function __construct($htgroup_filename) {
 		$this->filename = $htgroup_filename;
 		$this->createFileIfNotExistant ();
-	}
-
-	public function setEventManager(EventManagerInterface $eventManager) {
-		$this->eventManager = $eventManager;
-	}
-
-	/**
-	 *
-	 * @return EventManagerInterface
-	 */
-	public function getEventManager() {
-		return $this->eventManager;
 	}
 
 	protected function createFileIfNotExistant() {
@@ -94,11 +77,6 @@ class HtGroupFileService implements GroupManagementInterface, EventManagerAwareI
 		if (null === $this->groupCache) {
 			$this->groupCache = $this->readGroups ();
 		}
-		
-		$groups = $this->groupCache;
-		$this->getEventManager ()->trigger ( 'postGetGroups', __CLASS__, array( 
-				'groups' => $groups 
-		) );
 		
 		return $this->groupCache;
 	}

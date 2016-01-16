@@ -18,6 +18,5 @@ class HtGroupFileServiceFactory {
 		
 		return $groupService;
 	}
-
 }
 ?>
