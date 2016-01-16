@@ -10,7 +10,8 @@
     ],
     "require": {
         "zendframework/zend-stdlib": "~2.5",
-        "stevenbuehner/role-interfaces" : "~0.1"
+        "stevenbuehner/role-interfaces" : "~0.1",
+        "stevenbuehner/htpasswd-manager" : "~0.2"
     },
     "license": "MIT",
     "type" : "library",
